@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
-router.get("/", (req, res) => {
+const verifyToken = require("../middleware/authMiddleware");
+const roleMiddileware = require("../middleware/roleMiddleware");
+router.get("/", verifyToken, roleMiddileware("admin"), (req, res) => {
   const query = "SELECT * FROM employees";
   db.query(query, (err, result) => {
     if (err) {
@@ -27,7 +29,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
   const {
     firstname,
     lastname,
@@ -79,7 +81,7 @@ router.post("/", (req, res) => {
   );
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
   const { id } = req.params;
 
   const {
@@ -130,7 +132,7 @@ router.put("/:id", (req, res) => {
   );
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
   const { id } = req.params;
 
   const query = `DELETE FROM employees WHERE id = ?`;
