@@ -6,7 +6,7 @@ const verifyToken = (req, res, next) => {
   }
   const { authorization } = req.headers;
   if (!authorization) {
-    return res.status(403).send("invalid token");
+    return res.status(403).json({ message: "invalid token" });
   }
   const getToken = authorization.split(" ")[1];
   // console.log(getToken);
