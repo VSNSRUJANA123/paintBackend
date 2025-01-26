@@ -2,7 +2,15 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv").config();
 const cookie = require("cookie-parser");
 const verifyToken = (req, res, next) => {
-  const getToken = req.cookies.token;
+  if (!req.headers) {
+    return res.status(404).json({ message: "token not provided" });
+  }
+  const { authorization } = req.headers;
+  // console.log("hello", );
+  if (!authorization.split(" ")[1]) {
+    return res.status(403).send("invalid token");
+  }
+  const getToken = req.cookies.token || authorization.split(" ")[1];
   // console.log(getToken);
   if (!getToken) {
     return res.status(403).json({ error: "No token provided" });

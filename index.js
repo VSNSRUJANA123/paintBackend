@@ -1,4 +1,3 @@
-// https://dribbble.com/shots/14864303-Inventory-management-Mobile-app-Customer-Part
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
