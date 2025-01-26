@@ -8,13 +8,7 @@ const cors = require("cors");
 const verifyToken = require("../middleware/authMiddleware");
 const roleMiddileware = require("../middleware/roleMiddleware");
 const app = express();
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors());
 
 router.post("/register", (req, res) => {
   const { username, password } = req.body;

@@ -4,13 +4,17 @@ const db = require("../config/db");
 const verifyToken = require("../middleware/authMiddleware");
 const roleMiddileware = require("../middleware/roleMiddleware");
 router.get("/", verifyToken, roleMiddileware("admin"), (req, res) => {
-  const query = "SELECT * FROM employees";
-  db.query(query, (err, result) => {
-    if (err) {
-      return res.status(500).send("Failed to retrieve employees");
-    }
-    res.status(200).json(result);
-  });
+  try {
+    const query = "SELECT * FROM employees";
+    db.query(query, (err, result) => {
+      if (err) {
+        return res.status(500).send("Failed to retrieve employees");
+      }
+      res.status(200).json(result);
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "something went wrong" });
+  }
 });
 
 router.get("/:id", (req, res) => {
