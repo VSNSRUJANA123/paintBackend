@@ -1,7 +1,9 @@
 const express = require("express");
 const db = require("../config/db");
+const verifyToken = require("../middleware/authMiddleware");
+const roleMiddileware = require("../middleware/roleMiddleware");
 const router = express.Router();
-router.get("/", (req, res) => {
+router.get("/", verifyToken, roleMiddileware("admin"), (req, res) => {
   const query = `select * from Products`;
   db.query(query, (err, result) => {
     if (err) {
@@ -10,7 +12,7 @@ router.get("/", (req, res) => {
     res.status(200).json(result);
   });
 });
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
   const productsId = req.params.id;
   const query = `select * from Products where id=?`;
   db.query(query, [productsId], (err, result) => {
@@ -25,7 +27,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
   const {
     ProductCode,
     ProductName,
@@ -123,7 +125,7 @@ router.post("/", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
   const productIndex = req.params.id;
   const {
     ProductCode,
@@ -207,7 +209,7 @@ router.put("/:id", (req, res) => {
     }
   );
 });
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
   const deleteIndex = req.params.id;
   const deleteQueryId = `delete from Products where ProductID=?`;
   db.query(deleteQueryId, [deleteIndex], (err, result) => {

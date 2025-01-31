@@ -17,7 +17,7 @@ router.get("/", verifyToken, roleMiddileware("admin"), (req, res) => {
   }
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
   const employeeId = req.params.id;
   const query = "SELECT * FROM employees WHERE id = ?";
 
@@ -44,7 +44,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
     address,
     status,
   } = req.body;
-
+  // console.log("post employee", req.body);
   if (
     !firstname ||
     !lastname ||
@@ -56,10 +56,18 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
   ) {
     return res.status(400).json({ error: "All fields are required" });
   }
-
+  // console.log(
+  //   firstname,
+  //   lastname,
+  //   email,
+  //   phonenumber,
+  //   job_title,
+  //   company_name,
+  //   address,
+  //   status
+  // );
   const query = `INSERT INTO employees (firstname, lastname, email, phonenumber, job_title,company_name, address,status)
                  VALUES (?, ?, ?, ?, ?, ?,?,?)`;
-
   db.query(
     query,
     [
@@ -75,7 +83,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
     (err, result) => {
       if (err) {
         console.error("Error inserting data:", err);
-        return res.status(500).json({ error: "Failed to add employee" });
+        return res.status(403).json({ error: "Failed to add employee" || err });
       }
       res.status(201).json({
         message: "Employee added successfully",

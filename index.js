@@ -9,7 +9,6 @@ app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(cookie());
 app.use(cors());
-// app.use(cookieParser());
 app.use("/employees", require("./routers/employee"));
 app.use("/suppliers", require("./routers/suppliers"));
 app.use("/products", require("./routers/products"));

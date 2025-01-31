@@ -16,7 +16,7 @@ router.get("/", verifyToken, roleMiddileware("admin"), (req, res) => {
 });
 
 // Get supplier by ID
-router.get("/:id", (req, res) => {
+router.get("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
   const supplierId = req.params.id;
   const query = "SELECT * FROM suppliers WHERE id = ?";
 
@@ -49,6 +49,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
     website,
     description,
   } = req.body;
+
   if (
     !firstname ||
     !lastname ||
@@ -63,14 +64,18 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
   ) {
     return res.status(403).send("required fields");
   }
-  const companyQuery = "select * from company where id=?";
+  const companyQuery = "select * from company where id=? ";
   db.query(companyQuery, [company_id], (err, result) => {
     if (err) {
-      return res.status(403).send("something error to get company");
+      console.log(err);
+      return res
+        .status(403)
+        .json({ message: "something error to get company" });
     }
     if (result.length === 0) {
-      return res.status(200).send("company not found");
+      return res.status(200).json({ message: "company not found" });
     }
+    console.log("yes i am here");
     const supplierQuery = `insert into suppliers(firstname,
         lastname,
         email,
@@ -102,7 +107,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
       (err, result) => {
         if (err) {
           console.error("Error inserting supplier data:", err);
-          return res.status(500).json({ error: "Failed to add supplier" });
+          return res.status(500).json({ message: "Failed to add supplier" });
         }
         res.status(201).json({
           message: "Supplier added successfully",
