@@ -50,18 +50,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
     description,
   } = req.body;
 
-  if (
-    !firstname ||
-    !lastname ||
-    !email ||
-    !phonenumber ||
-    !company_id ||
-    !jobtitle ||
-    !address ||
-    !city ||
-    !state ||
-    !zip
-  ) {
+  if (!firstname || !lastname || !phonenumber || !company_id || !address) {
     return res.status(403).send("required fields");
   }
   const companyQuery = "select * from company where id=? ";
@@ -133,31 +122,26 @@ router.put("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
     website,
     description,
   } = req.body;
-  if (
-    !firstname ||
-    !lastname ||
-    !email ||
-    !phonenumber ||
-    !company_id ||
-    !jobtitle ||
-    !address ||
-    !city ||
-    !state ||
-    !zip
-  ) {
-    return res.status(403).send("required fields");
-  }
   const employeeQuery = "SELECT * FROM suppliers WHERE id = ?";
   db.query(employeeQuery, [productIndex], (err, employeeResult) => {
     if (err) {
       console.error("Error checking employeeId:", err);
       return res.status(500).json({ error: "Failed to verify employeeId" });
     }
-
-    if (employeeResult.length === 0) {
+    if (employeeResult.affectedRows === 0) {
       return res.status(404).json({ error: "supplier not found" });
     }
-    const query = `UPDATE suppliers SET firstname=?,
+    const companyIndex = "select * from company where id=?";
+    db.query(companyIndex, [company_id], (err, result) => {
+      if (err) {
+        return res
+          .status(403)
+          .send({ message: "error to get company details" });
+      }
+      if (result.length === 0) {
+        return res.status(403).send({ message: "invalid company" });
+      }
+      const query = `UPDATE suppliers SET firstname=?,
     lastname=?,
     email=?,
     phonenumber=?,
@@ -170,35 +154,36 @@ router.put("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
     website=?,
     description=?
     WHERE id = ?`;
-    const websiteValue = website ? website : null;
-    const descriptionValue = description ? description : null;
-    db.query(
-      query,
-      [
-        firstname,
-        lastname,
-        email,
-        phonenumber,
-        company_id,
-        jobtitle,
-        address,
-        city,
-        state,
-        zip,
-        websiteValue,
-        descriptionValue,
-        productIndex,
-      ],
-      (err, result) => {
-        if (err) {
-          return res.status(500).json({ error: "Failed to update supplier" });
+      const websiteValue = website ? website : null;
+      const descriptionValue = description ? description : null;
+      db.query(
+        query,
+        [
+          firstname,
+          lastname,
+          email,
+          phonenumber,
+          company_id,
+          jobtitle,
+          address,
+          city,
+          state,
+          zip,
+          websiteValue,
+          descriptionValue,
+          productIndex,
+        ],
+        (err, result) => {
+          if (err) {
+            return res.status(500).json({ error: "Failed to update supplier" });
+          }
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Supplier not found" });
+          }
+          res.status(200).json({ message: "Supplier updated successfully" });
         }
-        if (result.affectedRows === 0) {
-          return res.status(404).json({ message: "Supplier not found" });
-        }
-        res.status(200).json({ message: "Supplier updated successfully" });
-      }
-    );
+      );
+    });
   });
 });
 
@@ -208,10 +193,10 @@ router.delete("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
   db.query(query, [id], (err, result) => {
     if (err) {
       console.log(err);
-      return res.status(500).send("Failed to delete supplier");
+      return res.status(500).send({ message: "Failed to delete supplier" });
     }
     if (result.affectedRows === 0) {
-      return res.status(404).send("Supplier not found");
+      return res.status(404).send({ message: "Supplier not found" });
     }
     res.status(200).json({ message: "Supplier deleted successfully" });
   });
