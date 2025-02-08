@@ -88,6 +88,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
       res.status(201).json({
         message: "Employee added successfully",
         employeeId: result.insertId,
+        employeeData: req.body,
       });
     }
   );

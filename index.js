@@ -11,6 +11,7 @@ app.use(cookie());
 app.use(cors());
 app.use("/employees", require("./routers/employee"));
 app.use("/suppliers", require("./routers/suppliers"));
+app.use("/companyType", require("./routers/company"));
 app.use("/products", require("./routers/products"));
 app.use("/productCategory", require("./routers/productCategory"));
 app.use("/purchaseOrderDetail", require("./routers/purchaseOrderDetail"));

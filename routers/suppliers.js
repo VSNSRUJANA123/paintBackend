@@ -50,7 +50,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
     description,
   } = req.body;
 
-  if (!firstname || !lastname || !phonenumber || !company_id || !address) {
+  if (!firstname || !phonenumber || !company_id) {
     return res.status(403).send("required fields");
   }
   const companyQuery = "select * from company where id=? ";
@@ -100,6 +100,8 @@ router.post("/", verifyToken, roleMiddileware("admin"), (req, res) => {
         }
         res.status(201).json({
           message: "Supplier added successfully",
+          supplierId: result.insertId,
+          supplierData: req.body,
         });
       }
     );
@@ -180,7 +182,11 @@ router.put("/:id", verifyToken, roleMiddileware("admin"), (req, res) => {
           if (result.affectedRows === 0) {
             return res.status(404).json({ message: "Supplier not found" });
           }
-          res.status(200).json({ message: "Supplier updated successfully" });
+          res.status(200).json({
+            message: "Supplier updated successfully",
+            supplierId: productIndex,
+            supplierData: req.body,
+          });
         }
       );
     });
