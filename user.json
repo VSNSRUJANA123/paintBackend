@@ -1,0 +1,17 @@
+[
+  {
+    "username": "srinivas",
+    "password": "srinivas",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNyaW5pdmFzIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3MzYzMjA0OTIsImV4cCI6MTczODkxMjQ5Mn0.mz29WEDvTQ4LI28hWCk389uvBZg1ALA8kf37M3vD_6E"
+  },
+  {
+    "username": "admin",
+    "password": "admin@123",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzM2MzIwNjA2LCJleHAiOjE3Mzg5MTI2MDZ9.MI1VuBVvdurR-vPcx98ew_HDmAJfg9nWokJesbSqsXw"
+  },
+  {
+    "username": "srujana",
+    "password": "srujana",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNydWphbmEiLCJyb2xlIjoidXNlciIsImlhdCI6MTczNjMyMDY1MywiZXhwIjoxNzM4OTEyNjUzfQ.tVMlt4TMUXPK8PrShMn-DvEMU7K2CnHYW8JjZZmjOww"
+  }
+]
