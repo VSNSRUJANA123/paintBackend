@@ -3,7 +3,7 @@ const db = require("../config/db");
 const verifyToken = require("../middleware/authMiddleware");
 const roleMiddileware = require("../middleware/roleMiddleware");
 const router = express.Router();
-router.get("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const [result] = await db.execute("select * from masterscheudling");
     return res.status(200).json(result);
@@ -11,7 +11,7 @@ router.get("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
-router.get("/:id", verifyToken, roleMiddileware("admin"), async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const studyNo = req.params.id;
     const query = `SELECT * FROM masterscheudling WHERE studyNo=?`;
@@ -27,7 +27,7 @@ router.get("/:id", verifyToken, roleMiddileware("admin"), async (req, res) => {
       .json({ message: "Failed to retrieve masterscheudling", error: err });
   }
 });
-router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const {
       studyNo,
@@ -70,7 +70,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 });
-router.put("/:id", verifyToken, roleMiddileware("admin"), async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const studyNo = req.params.id;
     const {
@@ -115,24 +115,19 @@ router.put("/:id", verifyToken, roleMiddileware("admin"), async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 });
-router.delete(
-  "/:id",
-  verifyToken,
-  roleMiddileware("admin"),
-  async (req, res) => {
-    try {
-      const studyNo = req.params.id;
-      const [result] = await db.execute(
-        "DELETE FROM masterscheudling WHERE studyNo=?",
-        [studyNo]
-      );
-      if (result.affectedRows === 0) {
-        return res.status(403).json({ message: "studyNo is not found" });
-      }
-      return res.status(201).json({ message: "delete successfully" });
-    } catch (err) {
-      return res.status(500).json({ message: err.message });
+router.delete("/:id", async (req, res) => {
+  try {
+    const studyNo = req.params.id;
+    const [result] = await db.execute(
+      "DELETE FROM masterscheudling WHERE studyNo=?",
+      [studyNo]
+    );
+    if (result.affectedRows === 0) {
+      return res.status(403).json({ message: "studyNo is not found" });
     }
+    return res.status(201).json({ message: "delete successfully" });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
-);
+});
 module.exports = router;
