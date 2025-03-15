@@ -27,7 +27,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
     notes,
     products,
   } = req.body;
-
+  // console.log(req.body);
   if (
     !vendorId ||
     !submittedById ||
@@ -37,7 +37,7 @@ router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
   ) {
     return res.status(400).json({ message: "Missing required fields" });
   }
-  recievedDate = statusId > 4 ? recievedDate : null;
+  // statusId = statusId > 4 ? statusId : null;
   shippingFee = shippingFee ?? 0.0; // Default to 0.00
   taxamount = taxamount ?? 0.0; // Default to 0.00
   paymentDate = paymentDate > 4 ? paymentDate : null;
