@@ -4,6 +4,7 @@ const db = require("../config/db");
 const verifyToken = require("../middleware/authMiddleware");
 const roleMiddileware = require("../middleware/roleMiddleware");
 const nodemailer = require("nodemailer");
+const sendEmail = require("../utils/sendEmail");
 router.get("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
   try {
     const [result] = await db.execute("SELECT * FROM purchase");
@@ -110,6 +111,26 @@ router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
       [totalAmount + shippingFee + taxamount, newPurchaseOrderId]
     );
     await connection.commit(); // Commit transaction
+    const [vendorResult] = await connection.execute(
+      "SELECT email, vendorName FROM vendors WHERE vendorId = ?",
+      [vendorId]
+    );
+    if (vendorResult.length === 0) {
+      throw new Error("Vendor not found.");
+    }
+    const vendorEmail = vendorResult[0].email;
+    const vendorName = vendorResult[0].vendorName;
+    const approvalLink = `https://yourdomain.com/api/purchase/approve?vendorId=${vendorId}&purchaseOrderId=${newPurchaseOrderId}`;
+
+    let orderDetailsHtml = `<h3>Hello ${vendorName},</h3><p>You have a new purchase order:</p><ul>`;
+    for (const product of products) {
+      orderDetailsHtml += `<li>Product ID: ${product.ProductID}, Quantity: ${product.QuantityPerUnit}, Cost: ₹${product.StandardUnitCost}</li>`;
+    }
+    orderDetailsHtml += `</ul><p><b>Total:</b> ₹${
+      totalAmount + shippingFee + taxamount
+    }</p>`;
+    orderDetailsHtml += `<p><a href="${approvalLink}" style="padding: 10px 15px; background-color: green; color: white; text-decoration: none; border-radius: 4px;">Accept Purchase Order</a></p>`;
+    await sendEmail(vendorEmail, "New Purchase Order", orderDetailsHtml);
     return res.status(201).json({
       message: "Purchase order created successfully",
       purchaseData: { ...req.body },
