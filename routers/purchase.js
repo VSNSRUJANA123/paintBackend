@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../config/db");
 const verifyToken = require("../middleware/authMiddleware");
 const roleMiddileware = require("../middleware/roleMiddleware");
+const nodemailer = require("nodemailer");
 router.get("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
   try {
     const [result] = await db.execute("SELECT * FROM purchase");
