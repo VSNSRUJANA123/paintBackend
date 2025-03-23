@@ -12,96 +12,192 @@ router.get("/", async (req, res) => {
   }
 });
 router.get("/:id", async (req, res) => {
+  const studyNo = req.params.id;
   try {
-    const studyNo = req.params.id;
     const query = `SELECT * FROM masterscheudling WHERE studyNo=?`;
     const [result] = await db.execute(query, [studyNo]);
-
-    if (result.length === 0) {
+    if (result.affectedRows === 0) {
       return res.status(404).json({ message: "masterscheudling not found" });
     }
-    res.status(200).json(result[0]);
+    res.status(200).json(result);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to retrieve masterscheudling", error: err });
+    res.status(500).json({ message: err.message });
   }
 });
 router.post("/", async (req, res) => {
+  const {
+    studyNo,
+    studyphaseno,
+    compliance,
+    studyDirectorName,
+    studyShortTitleId,
+    testItemCategoryId,
+    testItemNameCode,
+    sponserIdCode,
+    studyAllocateDate,
+    studyfacenumber,
+    testguidelines,
+    testitemothercategory,
+    remarks,
+    mointoringScientist,
+    principalInvestigatorName,
+    userid,
+  } = req.body;
+  if (
+    !studyNo ||
+    !testItemCategoryId ||
+    !sponserIdCode ||
+    !studyShortTitleId ||
+    !userid
+  ) {
+    return res.status(403).send({ message: "enter required fields" });
+  }
   try {
-    const {
-      studyNo,
-      compliance,
-      studyShortTitle,
-      testItemNameCode,
-      testItemCategory,
-      studyDirectorName,
-      principalInvestigatorName,
-      sponser,
-      remarks,
-    } = req.body;
     const query = `
-      INSERT INTO masterscheudling(
-      studyNo,compliance,studyShortTitle,
-      testItemNameCode,testItemCategory,studyDirectorName,
-      principalInvestigatorName,studyInitiationDate,sponser,
-      remarks
-      ) VALUES (?,?,?,?,?,?,?,NOW(),?,?)
+    INSERT INTO masterscheudling(
+    studyNo,
+    studyphaseno,
+    compliance,
+    studyDirectorName,
+    studyShortTitleId,
+    testItemCategoryId,
+    testItemNameCode,
+    sponserIdCode,
+    studyAllocateDate,
+    studyInitiationDate,
+    studyfacenumber,
+    testguidelines,
+    testitemothercategory,
+    remarks,
+    mointoringScientist,
+    principalInvestigatorName,
+    userid ) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,?,?,?,?,?)
     `;
-    if (!studyNo) {
-      return res.status(403).json({ message: "required filed" });
+    const [resultTestItem] = await db.execute(
+      "select * from testitemdeatils where testitemcode=?",
+      [testItemCategoryId]
+    );
+    if (resultTestItem.length === 0) {
+      return res.status(403).send({ message: "testItemCode not found" });
     }
-    const [result] = await db.execute(query, [
+    const [resultStudyTitles] = await db.execute(
+      "select * from studytitles where studytitlecode=?",
+      [studyShortTitleId]
+    );
+    // console.log("studyItem", resultStudyTitles);
+    if (resultStudyTitles.length === 0) {
+      return res.status(403).send({ message: "studyTitleCode not found" });
+    }
+    const [resultsponsor] = await db.execute(
+      "select * from sponsor where sponsercode=?",
+      [sponserIdCode]
+    );
+    if (resultsponsor.length === 0) {
+      return res.status(403).send({ message: "sponsorCode not found" });
+    }
+    await db.execute(query, [
       studyNo,
+      studyphaseno,
       compliance,
-      studyShortTitle,
-      testItemNameCode,
-      testItemCategory,
       studyDirectorName,
-      principalInvestigatorName,
-      sponser,
+      studyShortTitleId,
+      testItemCategoryId,
+      testItemNameCode,
+      sponserIdCode,
+      studyAllocateDate,
+      studyfacenumber,
+      testguidelines,
+      testitemothercategory,
       remarks,
+      mointoringScientist,
+      principalInvestigatorName,
+      userid,
     ]);
     return res.status(201).json({
       message: "created successfully",
-      masterscheudleId: { ...req.body },
+      data: { ...req.body },
     });
   } catch (err) {
     return res.status(500).json({ message: err.message });
   }
 });
 router.put("/:id", async (req, res) => {
+  const studyNo = req.params.id;
+  const {
+    studyphaseno,
+    compliance,
+    studyDirectorName,
+    studyShortTitleId,
+    testItemCategoryId,
+    testItemNameCode,
+    sponserIdCode,
+    studyAllocateDate,
+    studyfacenumber,
+    testguidelines,
+    testitemothercategory,
+    remarks,
+    mointoringScientist,
+    principalInvestigatorName,
+    userid,
+  } = req.body;
+  if (!studyNo) {
+    return res.status(403).json({ message: "required filed" });
+  }
   try {
-    const studyNo = req.params.id;
-    const {
-      compliance,
-      studyShortTitle,
-      testItemNameCode,
-      testItemCategory,
-      studyDirectorName,
-      principalInvestigatorName,
-      sponser,
-      remarks,
-    } = req.body;
-    if (!studyNo) {
-      return res.status(403).json({ message: "required filed" });
-    }
-
-    const query = `UPDATE masterscheudling SET compliance=?,
-       studyShortTitle=?,testItemNameCode=?,testItemCategory=?,
-       studyDirectorName=?,principalInvestigatorName=?,
-       studyInitiationDate=NOW(),sponser=?,remarks=?
-       WHERE studyNo=?
+    const query = `update masterscheudling set  studyphaseno=?,
+    compliance=?,
+    studyDirectorName=?,
+    studyShortTitleId=?,
+    testItemCategoryId=?,
+    testItemNameCode=?,
+    sponserIdCode=?,
+    studyAllocateDate=?,
+    studyfacenumber=?,
+    testguidelines=?,
+    testitemothercategory=?,
+    remarks=?,
+    mointoringScientist=?,
+    principalInvestigatorName=?,
+    userid=? where studyNo=?
     `;
+    const [resultTestItem] = await db.execute(
+      "select * from testitemdeatils where testitemcode=?",
+      [testItemCategoryId]
+    );
+    if (resultTestItem.length === 0) {
+      return res.status(403).send({ message: "testItemCode not found" });
+    }
+    const [resultStudyTitles] = await db.execute(
+      "select * from studytitles where studytitlecode=?",
+      [studyShortTitleId]
+    );
+    // console.log("studyItem", resultStudyTitles);
+    if (resultStudyTitles.length === 0) {
+      return res.status(403).send({ message: "studyTitleCode not found" });
+    }
+    const [resultsponsor] = await db.execute(
+      "select * from sponsor where sponsercode=?",
+      [sponserIdCode]
+    );
+    if (resultsponsor.length === 0) {
+      return res.status(403).send({ message: "sponsorCode not found" });
+    }
     const [result] = await db.execute(query, [
+      studyphaseno,
       compliance,
-      studyShortTitle,
-      testItemNameCode,
-      testItemCategory,
       studyDirectorName,
-      principalInvestigatorName,
-      sponser,
+      studyShortTitleId,
+      testItemCategoryId,
+      testItemNameCode,
+      sponserIdCode,
+      studyAllocateDate,
+      studyfacenumber,
+      testguidelines,
+      testitemothercategory,
       remarks,
+      mointoringScientist,
+      principalInvestigatorName,
+      userid,
       studyNo,
     ]);
     if (result.affectedRows === 0) {
@@ -116,8 +212,8 @@ router.put("/:id", async (req, res) => {
   }
 });
 router.delete("/:id", async (req, res) => {
+  const studyNo = req.params.id;
   try {
-    const studyNo = req.params.id;
     const [result] = await db.execute(
       "DELETE FROM masterscheudling WHERE studyNo=?",
       [studyNo]

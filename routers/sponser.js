@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
 });
 router.post("/", async (req, res) => {
   const { sponsercode, sponsername, isActive } = req.body;
-  if (!sponsercode || !sponsername || !isActive) {
+  if (!sponsercode || !sponsername || isActive === null) {
     return res.json({ message: "required all fields" });
   }
   try {

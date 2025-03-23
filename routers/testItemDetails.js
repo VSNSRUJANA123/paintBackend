@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
 });
 router.post("/", async (req, res) => {
   const { testitemcode, testitemname, isActive } = req.body;
-  if (!testitemcode || !testitemname || !isActive) {
+  if (!testitemcode || !testitemname || isActive === null) {
     return res.status(403).send({ message: "required all fields" });
   }
   try {

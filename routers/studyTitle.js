@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const { studytitlecode, studyitemname, isActive } = req.body;
-  if (!studytitlecode || !studyitemname || !isActive) {
+  if (!studytitlecode || !studyitemname || isActive === null) {
     return res.status(403).send({ message: "required all fields" });
   }
   try {
