@@ -19,9 +19,13 @@ app.use("/purchaseStatus", require("./routers/purchaseOrderStatus"));
 app.use("/productSupplier", require("./routers/productSupplier"));
 app.use("/masterstudy", require("./routers/masterscheudling"));
 app.use("/purchaseOrderDetail", require("./routers/purchaseOrderDetail"));
+app.use("/sponsor", require("./routers/sponser"));
+app.use("/testitemdeatils", require("./routers/testItemDetails"));
+app.use("/studytitle", require("./routers/studyTitle"));
 // app.use("/uploads", require("./routers/imageUpload"));
 app.use("/api/auth", require("./routers/loginRoute"));
 app.use("/api/user", require("./routers/userRoute"));
+
 const PORT = process.env.PORT || 5000;
 app.get("/working", (req, res) => {
   return res.send({ message: "hi welcome to paint application" });
