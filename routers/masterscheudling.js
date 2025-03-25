@@ -140,6 +140,10 @@ router.put("/:id", async (req, res) => {
     principalInvestigatorName,
     userid,
   } = req.body;
+  if (!studyNo || !studyShortTitleId || !testItemCategoryId || !sponserIdCode) {
+    return res.status(400).json({ message: "Required field(s) missing" });
+  }
+
   if (!studyNo) {
     return res.status(403).json({ message: "required filed" });
   }
@@ -183,21 +187,21 @@ router.put("/:id", async (req, res) => {
       return res.status(403).send({ message: "sponsorCode not found" });
     }
     const [result] = await db.execute(query, [
-      studyphaseno,
-      compliance,
-      studyDirectorName,
+      studyphaseno ?? null,
+      compliance ?? null,
+      studyDirectorName ?? null,
       studyShortTitleId,
       testItemCategoryId,
-      testItemNameCode,
+      testItemNameCode ?? null,
       sponserIdCode,
-      studyAllocateDate,
-      studyfacenumber,
-      testguidelines,
-      testitemothercategory,
-      remarks,
-      mointoringScientist,
-      principalInvestigatorName,
-      userid,
+      studyAllocateDate ?? null,
+      studyfacenumber ?? null,
+      testguidelines ?? null,
+      testitemothercategory ?? null,
+      remarks ?? null,
+      mointoringScientist ?? null,
+      principalInvestigatorName ?? null,
+      userid ?? null,
       studyNo,
     ]);
     if (result.affectedRows === 0) {
@@ -205,7 +209,7 @@ router.put("/:id", async (req, res) => {
     }
     return res.status(201).json({
       message: "Update Successfully",
-      masterscheudleData: { ...req.body },
+      data: { ...req.body },
     });
   } catch (err) {
     return res.status(500).json({ message: err.message });
