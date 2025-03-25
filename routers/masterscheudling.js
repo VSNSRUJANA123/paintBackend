@@ -95,6 +95,7 @@ router.post("/", async (req, res) => {
     if (resultsponsor.length === 0) {
       return res.status(403).send({ message: "sponsorCode not found" });
     }
+    const newTestguidelines = JSON.stringify(testguidelines);
     await db.execute(query, [
       studyNo,
       studyphaseno,
@@ -106,7 +107,7 @@ router.post("/", async (req, res) => {
       sponserIdCode,
       studyAllocateDate,
       studyfacenumber,
-      testguidelines,
+      newTestguidelines,
       testitemothercategory,
       remarks,
       mointoringScientist,
@@ -147,6 +148,7 @@ router.put("/:id", async (req, res) => {
   if (!studyNo) {
     return res.status(403).json({ message: "required filed" });
   }
+  const newTestguidelines = JSON.stringify([testguidelines]);
   try {
     const query = `update masterscheudling set  studyphaseno=?,
     compliance=?,
@@ -196,7 +198,7 @@ router.put("/:id", async (req, res) => {
       sponserIdCode,
       studyAllocateDate ?? null,
       studyfacenumber ?? null,
-      testguidelines ?? null,
+      newTestguidelines,
       testitemothercategory ?? null,
       remarks ?? null,
       mointoringScientist ?? null,
@@ -209,7 +211,10 @@ router.put("/:id", async (req, res) => {
     }
     return res.status(201).json({
       message: "Update Successfully",
-      data: { ...req.body },
+      data: {
+        ...req.body,
+        studyNo,
+      },
     });
   } catch (err) {
     return res.status(500).json({ message: err.message });
