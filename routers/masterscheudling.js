@@ -44,12 +44,25 @@ router.post("/", async (req, res) => {
   } = req.body;
   if (
     !studyNo ||
-    !testItemCategoryId ||
-    !sponserIdCode ||
+    !studyphaseno ||
+    !compliance ||
+    !studyDirectorName ||
     !studyShortTitleId ||
+    !testItemCategoryId ||
+    !testItemNameCode ||
+    !sponserIdCode ||
+    !studyAllocateDate ||
+    !testguidelines ||
+    !testitemothercategory ||
+    !remarks ||
+    !mointoringScientist ||
+    !principalInvestigatorName ||
     !userid
   ) {
-    return res.status(403).send({ message: "enter required fields" });
+    return res.status(403).send({
+      message:
+        "required - Study Number,Study Phase No,SponserIDCode,Mointoring-Scientist,Compliance,Study DirectorName,Study-Short-Titled-ID,Test-Item-Category-ID,TestItem Name Code,Study-AllocateDate,Testguidelines,Remarks",
+    });
   }
   try {
     const query = `
