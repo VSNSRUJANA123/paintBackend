@@ -45,6 +45,7 @@ router.post("/", validateFormData, async (req, res) => {
     principalInvestigatorName,
     userid,
   } = req.body;
+  // is testitemothercategory:"" defaulty added form json data ?
   try {
     const query = `
     INSERT INTO masterscheudling(
@@ -86,7 +87,7 @@ router.post("/", validateFormData, async (req, res) => {
     if (resultsponsor.length === 0) {
       return res.status(403).send({ message: "sponsorCode not found" });
     }
-    const newTestguidelines = JSON.stringify(testguidelines);
+    // const newTestguidelines = JSON.stringify(testguidelines);
     await db.execute(query, [
       studyNo,
       studyphaseno,
