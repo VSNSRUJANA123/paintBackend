@@ -23,10 +23,6 @@ const validateFormData = (req, res, next) => {
   if (error) {
     const fieldNames = error.details.map((err) => err.context.key);
     return res.status(400).json({ errors: fieldNames });
-    // return res.status(400).json({
-    //   message: "Validation Error",
-    //   errors: error.details.map((err) => err.message),
-    // });
   }
 
   next();

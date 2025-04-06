@@ -45,7 +45,8 @@ router.post("/", validateFormData, async (req, res) => {
     principalInvestigatorName,
     userid,
   } = req.body;
-  // is testitemothercategory:"" defaulty added form json data ?
+  let finalTestItemCategoryId = testItemCategoryId;
+
   try {
     const query = `
     INSERT INTO masterscheudling(
@@ -70,9 +71,24 @@ router.post("/", validateFormData, async (req, res) => {
       "select * from testitemdeatils where testitemcode=?",
       [testItemCategoryId]
     );
-    if (resultTestItem.length === 0) {
-      return res.status(403).send({ message: "testItemCode not found" });
-    }
+    // if (testItemCategoryId === "other" && testitemothercategory) {
+    //   // Check if this custom category already exists
+    //   const [existing] = await db.execute(
+    //     "SELECT * FROM testitemdeatils WHERE testitemname = ?",
+    //     [testitemothercategory]
+    //   );
+    //   if (existing.length === 0) {
+    //     // Insert the new custom category
+    //     const [insertResult] = await db.execute(
+    //       "INSERT INTO testitemdeatils (testitemname) VALUES (?)",
+    //       [testitemothercategory]
+    //     );
+    //     finalTestItemCategoryId = insertResult.insertId; // newly generated id
+    //   } else {
+    //     finalTestItemCategoryId = existing[0].testitemcode;
+    //   }
+    // }
+    // console.log("finalTestItemCategoryId", finalTestItemCategoryId);
     const [resultStudyTitles] = await db.execute(
       "select * from studytitles where studytitlecode=?",
       [studyShortTitleId]
