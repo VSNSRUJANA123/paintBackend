@@ -11,6 +11,8 @@ const formSchema = Joi.object({
   sponserIdCode: Joi.string().required(),
   studyAllocateDate: Joi.date().required(),
   testguidelines: Joi.string().required(),
+  testitemothercategory: Joi.string(),
+  remarks: Joi.string(),
   mointoringScientist: Joi.string().required(),
   principalInvestigatorName: Joi.string().required(),
   userid: Joi.string().required(),

@@ -45,7 +45,6 @@ router.post("/", validateFormData, async (req, res) => {
     principalInvestigatorName,
     userid,
   } = req.body;
-
   try {
     const query = `
     INSERT INTO masterscheudling(
