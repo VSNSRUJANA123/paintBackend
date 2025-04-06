@@ -29,7 +29,6 @@ router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
     notes,
     products,
   } = req.body;
-  // console.log(req.body);
   if (
     !vendorId ||
     !submittedById ||
@@ -90,15 +89,6 @@ router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
       }
       const lineTotal = QuantityPerUnit * StandardUnitCost;
       totalAmount += lineTotal;
-      // const [maxPurchaseOrderDetail] = await connection.execute(
-      //   `SELECT IFNULL(MAX(purchaseOrderId), 0) + 1 AS new_id FROM purchaseOrderDetail`
-      // );
-      // const newPurchaseOrderDetailId = maxPurchaseOrderDetail[0].new_id;
-      // console.log(
-      //   "purchase order detail",
-      //   newPurchaseOrderDetailId,
-      //   maxPurchaseOrderDetail
-      // );
       await connection.execute(
         `INSERT INTO purchaseOrderDetail (purchaseOrderId, productId, quantity, unitCost) 
          VALUES (?, ?, ?, ?)`,

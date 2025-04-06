@@ -138,7 +138,7 @@ router.put("/:id", async (req, res) => {
   if (!studyNo) {
     return res.status(403).json({ message: "required filed" });
   }
-  const newTestguidelines = JSON.stringify([testguidelines]);
+  // const newTestguidelines = JSON.stringify(testguidelines);
   try {
     const query = `update masterscheudling set  studyphaseno=?,
     compliance=?,
@@ -186,7 +186,7 @@ router.put("/:id", async (req, res) => {
       testItemNameCode ?? null,
       sponserIdCode,
       studyAllocateDate ?? null,
-      newTestguidelines,
+      testguidelines ?? null,
       testitemothercategory ?? null,
       remarks ?? null,
       mointoringScientist ?? null,
