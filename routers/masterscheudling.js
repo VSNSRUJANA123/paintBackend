@@ -3,6 +3,8 @@ const db = require("../config/db");
 const verifyToken = require("../middleware/authMiddleware");
 const roleMiddileware = require("../middleware/roleMiddleware");
 const router = express.Router();
+const validateFormData = require("../middleware/validationForm");
+
 router.get("/", async (req, res) => {
   try {
     const [result] = await db.execute("select * from masterscheudling");
@@ -24,7 +26,8 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-router.post("/", async (req, res) => {
+
+router.post("/", validateFormData, async (req, res) => {
   const {
     studyNo,
     studyphaseno,
@@ -42,6 +45,23 @@ router.post("/", async (req, res) => {
     principalInvestigatorName,
     userid,
   } = req.body;
+  // console.log(
+  //   studyNo,
+  //   studyphaseno,
+  //   compliance,
+  //   studyDirectorName,
+  //   studyShortTitleId,
+  //   testItemCategoryId,
+  //   testItemNameCode,
+  //   sponserIdCode,
+  //   studyAllocateDate,
+  //   testguidelines,
+  //   testitemothercategory,
+  //   remarks,
+  //   mointoringScientist,
+  //   principalInvestigatorName,
+  //   userid
+  // );
   if (
     !studyNo ||
     !studyphaseno ||
@@ -59,11 +79,29 @@ router.post("/", async (req, res) => {
     !principalInvestigatorName ||
     !userid
   ) {
+    console.log(
+      studyNo,
+      studyphaseno,
+      compliance,
+      studyDirectorName,
+      studyShortTitleId,
+      testItemCategoryId,
+      testItemNameCode,
+      sponserIdCode,
+      studyAllocateDate,
+      testguidelines,
+      testitemothercategory,
+      remarks,
+      mointoringScientist,
+      principalInvestigatorName,
+      userid
+    );
     return res.status(403).send({
       message:
         "required - Study Number,Study Phase No,SponserIDCode,Mointoring-Scientist,Compliance,Study DirectorName,Study-Short-Titled-ID,Test-Item-Category-ID,TestItem Name Code,Study-AllocateDate,Testguidelines,Remarks",
     });
   }
+
   try {
     const query = `
     INSERT INTO masterscheudling(
@@ -76,13 +114,13 @@ router.post("/", async (req, res) => {
     testItemNameCode,
     sponserIdCode,
     studyAllocateDate,
-    studyInitiationDate,    
+    studyInitiationDate,
     testguidelines,
     testitemothercategory,
     remarks,
     mointoringScientist,
     principalInvestigatorName,
-    userid ) VALUES (?,?,?,?,?,?,?,?,now(),?,?,?,?,?,?,?)
+    userid) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,?,?,?,?)
     `;
     const [resultTestItem] = await db.execute(
       "select * from testitemdeatils where testitemcode=?",
@@ -95,7 +133,6 @@ router.post("/", async (req, res) => {
       "select * from studytitles where studytitlecode=?",
       [studyShortTitleId]
     );
-    // console.log("studyItem", resultStudyTitles);
     if (resultStudyTitles.length === 0) {
       return res.status(403).send({ message: "studyTitleCode not found" });
     }
@@ -117,7 +154,7 @@ router.post("/", async (req, res) => {
       testItemNameCode,
       sponserIdCode,
       studyAllocateDate,
-      newTestguidelines,
+      testguidelines,
       testitemothercategory,
       remarks,
       mointoringScientist,
