@@ -62,45 +62,6 @@ router.post("/", validateFormData, async (req, res) => {
   //   principalInvestigatorName,
   //   userid
   // );
-  if (
-    !studyNo ||
-    !studyphaseno ||
-    !compliance ||
-    !studyDirectorName ||
-    !studyShortTitleId ||
-    !testItemCategoryId ||
-    !testItemNameCode ||
-    !sponserIdCode ||
-    !studyAllocateDate ||
-    !testguidelines ||
-    !testitemothercategory ||
-    !remarks ||
-    !mointoringScientist ||
-    !principalInvestigatorName ||
-    !userid
-  ) {
-    console.log(
-      studyNo,
-      studyphaseno,
-      compliance,
-      studyDirectorName,
-      studyShortTitleId,
-      testItemCategoryId,
-      testItemNameCode,
-      sponserIdCode,
-      studyAllocateDate,
-      testguidelines,
-      testitemothercategory,
-      remarks,
-      mointoringScientist,
-      principalInvestigatorName,
-      userid
-    );
-    return res.status(403).send({
-      message:
-        "required - Study Number,Study Phase No,SponserIDCode,Mointoring-Scientist,Compliance,Study DirectorName,Study-Short-Titled-ID,Test-Item-Category-ID,TestItem Name Code,Study-AllocateDate,Testguidelines,Remarks",
-    });
-  }
 
   try {
     const query = `
