@@ -45,23 +45,6 @@ router.post("/", validateFormData, async (req, res) => {
     principalInvestigatorName,
     userid,
   } = req.body;
-  // console.log(
-  //   studyNo,
-  //   studyphaseno,
-  //   compliance,
-  //   studyDirectorName,
-  //   studyShortTitleId,
-  //   testItemCategoryId,
-  //   testItemNameCode,
-  //   sponserIdCode,
-  //   studyAllocateDate,
-  //   testguidelines,
-  //   testitemothercategory,
-  //   remarks,
-  //   mointoringScientist,
-  //   principalInvestigatorName,
-  //   userid
-  // );
 
   try {
     const query = `
