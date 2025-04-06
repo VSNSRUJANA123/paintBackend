@@ -21,10 +21,12 @@ const validateFormData = (req, res, next) => {
   const { error } = formSchema.validate(req.body, { abortEarly: false });
 
   if (error) {
-    return res.status(400).json({
-      message: "Validation Error",
-      errors: error.details.map((err) => err.message),
-    });
+    const fieldNames = error.details.map((err) => err.context.key);
+    return res.status(400).json({ errors: fieldNames });
+    // return res.status(400).json({
+    //   message: "Validation Error",
+    //   errors: error.details.map((err) => err.message),
+    // });
   }
 
   next();
