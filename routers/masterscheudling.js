@@ -46,7 +46,6 @@ router.post("/", validateFormData, async (req, res) => {
     userid,
   } = req.body;
   let finalTestItemCategoryId = testItemCategoryId;
-
   try {
     const query = `
     INSERT INTO masterscheudling(

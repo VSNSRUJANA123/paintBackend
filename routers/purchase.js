@@ -102,15 +102,15 @@ router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
     );
     await connection.commit(); // Commit transaction
     const [vendorResult] = await connection.execute(
-      "SELECT email, vendorName FROM vendors WHERE vendorId = ?",
+      "SELECT email, firstname FROM suppliers WHERE id = ?",
       [vendorId]
     );
     if (vendorResult.length === 0) {
       throw new Error("Vendor not found.");
     }
     const vendorEmail = vendorResult[0].email;
-    const vendorName = vendorResult[0].vendorName;
-    const approvalLink = `https://yourdomain.com/api/purchase/approve?vendorId=${vendorId}&purchaseOrderId=${newPurchaseOrderId}`;
+    const vendorName = vendorResult[0].firstname;
+    const approvalLink = `https://paint-backend.vercel.app/purchases/approve?vendorId=${vendorId}&purchaseOrderId=${newPurchaseOrderId}`;
 
     let orderDetailsHtml = `<h3>Hello ${vendorName},</h3><p>You have a new purchase order:</p><ul>`;
     for (const product of products) {
@@ -130,6 +130,39 @@ router.post("/", verifyToken, roleMiddileware("admin"), async (req, res) => {
     return res.status(500).json({ message: error.message });
   } finally {
     if (connection) connection.release(); // Release the connection
+  }
+});
+router.get("/approve", async (req, res) => {
+  const { vendorId, purchaseOrderId } = req.query;
+
+  if (!vendorId || !purchaseOrderId) {
+    return res.status(400).send("Missing vendor or order info.");
+  }
+  let connection;
+  try {
+    connection = await db.getConnection();
+
+    const [purchase] = await connection.execute(
+      `SELECT * FROM purchase WHERE purchaseOrderId = ? AND vendorId = ?`,
+      [purchaseOrderId, vendorId]
+    );
+
+    if (purchase.length === 0) {
+      return res.status(404).send("Purchase order not found.");
+    }
+
+    // Update status to Approved
+    await connection.execute(
+      `UPDATE purchase SET statusId = 1 WHERE purchaseOrderId = ?`,
+      [purchaseOrderId]
+    );
+    return res.send(
+      `<h2>✅ Purchase Order #${purchaseOrderId} approved successfully!</h2>`
+    );
+  } catch (error) {
+    return res.status(500).send("Error approving order: " + error.message);
+  } finally {
+    if (connection) connection.release();
   }
 });
 
