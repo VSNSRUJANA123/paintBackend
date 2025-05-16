@@ -7,7 +7,9 @@ const validateFormData = require("../middleware/validationForm");
 
 router.get("/", async (req, res) => {
   try {
-    const [result] = await db.execute("select * from masterscheudling");
+    const [result] = await db.execute(
+      "select * from masterscheudling order by isCreated desc"
+    );
     return res.status(200).json(result);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -44,8 +46,10 @@ router.post("/", validateFormData, async (req, res) => {
     mointoringScientist,
     principalInvestigatorName,
     userid,
+    isActive,
   } = req.body;
-  let finalTestItemCategoryId = testItemCategoryId;
+  console.log(req.body);
+  // let finalTestItemCategoryId = testItemCategoryId;
   try {
     const query = `
     INSERT INTO masterscheudling(
@@ -64,7 +68,8 @@ router.post("/", validateFormData, async (req, res) => {
     remarks,
     mointoringScientist,
     principalInvestigatorName,
-    userid) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,?,?,?,?)
+    userid, isCreated,    
+    isActive) VALUES (?,?,?,?,?,?,?,?,?,now(),?,?,?,?,?,?,NOW(),?)
     `;
     const [resultTestItem] = await db.execute(
       "select * from testitemdeatils where testitemcode=?",
@@ -119,6 +124,7 @@ router.post("/", validateFormData, async (req, res) => {
       mointoringScientist,
       principalInvestigatorName,
       userid,
+      isActive,
     ]);
     return res.status(201).json({
       message: "created successfully",
@@ -145,6 +151,7 @@ router.put("/:id", async (req, res) => {
     mointoringScientist,
     principalInvestigatorName,
     userid,
+    isActive,
   } = req.body;
   if (!studyNo || !studyShortTitleId || !testItemCategoryId || !sponserIdCode) {
     return res.status(400).json({ message: "Required field(s) missing" });
@@ -168,7 +175,7 @@ router.put("/:id", async (req, res) => {
     remarks=?,
     mointoringScientist=?,
     principalInvestigatorName=?,
-    userid=? where studyNo=?
+    userid=?,isUpdated=now(),isActive=? where studyNo=?
     `;
     const [resultTestItem] = await db.execute(
       "select * from testitemdeatils where testitemcode=?",
@@ -207,6 +214,7 @@ router.put("/:id", async (req, res) => {
       mointoringScientist ?? null,
       principalInvestigatorName ?? null,
       userid ?? null,
+      isActive ?? null,
       studyNo,
     ]);
     if (result.affectedRows === 0) {

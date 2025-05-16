@@ -11,11 +11,13 @@ const formSchema = Joi.object({
   sponserIdCode: Joi.string().required(),
   studyAllocateDate: Joi.date().required(),
   testguidelines: Joi.string().required(),
-  testitemothercategory: Joi.string().optional().allow(""),
+  testitemothercategory: Joi.string().required(),
   remarks: Joi.string().optional().allow(""),
   mointoringScientist: Joi.string().required(),
   principalInvestigatorName: Joi.string().required(),
   userid: Joi.string().required(),
+  // isCreated: Joi.date().required().default(new Date()),
+  isActive: Joi.boolean().required(),
 });
 const validateFormData = (req, res, next) => {
   const { error } = formSchema.validate(req.body, { abortEarly: false });

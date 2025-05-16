@@ -153,7 +153,7 @@ router.get("/approve", async (req, res) => {
 
     // Update status to Approved
     await connection.execute(
-      `UPDATE purchase SET statusId = 1 WHERE purchaseOrderId = ?`,
+      `UPDATE purchase SET statusId = 1,approvedDate=NOW() WHERE purchaseOrderId = ?`,
       [purchaseOrderId]
     );
     return res.send(
